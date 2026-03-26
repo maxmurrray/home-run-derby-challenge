@@ -463,6 +463,8 @@ async function fetchAllStats(resolution, forceRefresh){
 // ═══════════════════════════════════════════════════════
 // ESPN — resolve IDs & build profile links for verification
 // ═══════════════════════════════════════════════════════
+function normName(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+
 async function resolveESPN(resolution) {
   const cached = cGet(CACHE_ESPN, TTL_ESPN);
   if (cached) return cached;
@@ -476,15 +478,16 @@ async function resolveESPN(resolution) {
     const data = await jFetch(`${ESPN_API}/athletes?limit=1000&active=true`);
     const items = data.items || data.athletes || [];
     items.forEach(p => {
-      const name = (p.fullName || p.displayName || '').toLowerCase().trim();
-      if (!name) return;
-      const slug = name.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      espnMap[name] = { espnId: String(p.id), espnName: p.fullName || p.displayName, espnUrl: `https://www.espn.com/mlb/player/_/id/${p.id}/${slug}` };
+      const raw = p.fullName || p.displayName || '';
+      if (!raw) return;
+      const key = normName(raw);
+      const slug = key.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      espnMap[key] = { espnId: String(p.id), espnName: raw, espnUrl: `https://www.espn.com/mlb/player/_/id/${p.id}/${slug}` };
     });
   } catch(e) { console.warn('ESPN bulk fetch failed:', e.message); }
 
   // Step 2: For any player not found in bulk, try individual search
-  const needed = Object.values(resolution).filter(r => r.id && !espnMap[r.full?.toLowerCase()]);
+  const needed = Object.values(resolution).filter(r => r.id && !espnMap[normName(r.full)]);
   if (needed.length) {
     setDetail(`ESPN: searching ${needed.length} remaining players…`);
     const BATCH = 8;
@@ -495,12 +498,13 @@ async function resolveESPN(resolution) {
           const data = await jFetch(`${ESPN_API}/athletes?search=${q}&limit=10`);
           const items = data.items || data.athletes || [];
           // Prefer exact full name match, fall back to first result
-          const match = items.find(p => (p.fullName||p.displayName||'').toLowerCase() === res.full.toLowerCase())
-                     || items.find(p => (p.displayName||'').toLowerCase().includes(res.full.split(' ').pop().toLowerCase()))
+          const match = items.find(p => normName(p.fullName||p.displayName) === normName(res.full))
+                     || items.find(p => normName(p.displayName||'').includes(normName(res.full.split(' ').pop())))
                      || items[0];
           if (match) {
-            const slug = (match.fullName||match.displayName||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-            espnMap[res.full.toLowerCase()] = { espnId: String(match.id), espnName: match.fullName || match.displayName, espnUrl: `https://www.espn.com/mlb/player/_/id/${match.id}/${slug}` };
+            const raw = match.fullName || match.displayName || '';
+            const slug = normName(raw).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+            espnMap[normName(res.full)] = { espnId: String(match.id), espnName: raw, espnUrl: `https://www.espn.com/mlb/player/_/id/${match.id}/${slug}` };
           }
         } catch {}
       }));
@@ -514,7 +518,7 @@ async function resolveESPN(resolution) {
 // Build a clickable ESPN link for a roster name, or plain text if not found
 function playerLink(rosterName, cssClass='') {
   const res = gResolution[rosterName] || {};
-  const espn = gESPN[res.full?.toLowerCase()] || {};
+  const espn = gESPN[normName(res.full)] || {};
   const displayName = espn.espnName || res.full || rosterName;
   if (espn.espnUrl) {
     return `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink ${cssClass}" title="View ${displayName} on ESPN">${displayName}</a>`;
@@ -761,7 +765,7 @@ function renderRegistry(){
     const r=gResolution[name]||{};
     const srcClass=r.source==='registry'?'src-registry':r.source==='api'?'src-api':'src-notfound';
     const srcLabel=r.source==='registry'?'Hardcoded':r.source==='api'?'API Match':'Not Found';
-    const espn=gESPN[r.full?.toLowerCase()]||{};
+    const espn=gESPN[normName(r.full)]||{};
     const nameDisplay=espn.espnUrl
       ? `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink" title="View on ESPN">${espn.espnName||r.full}</a><span class="espn-badge">ESPN</span>`
       : (r.full||'—');
