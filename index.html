@@ -128,6 +128,13 @@ details[open] .reg-summary{border-radius:8px 8px 0 0;border-bottom-color:transpa
 .src-api{background:rgba(59,130,246,.15);color:#60a5fa}
 .src-notfound{background:rgba(239,68,68,.15);color:var(--red)}
 
+/* ESPN LINKS */
+.plink{color:inherit;text-decoration:none;border-bottom:1px dotted rgba(245,197,24,.4);transition:border-color .15s,color .15s}
+.plink:hover{color:var(--gold);border-bottom-color:var(--gold)}
+.pc.counting .plink:hover{color:#fff}
+.espn-badge{font-size:9px;background:rgba(255,55,0,.15);color:#ff6b47;padding:1px 5px;border-radius:2px;font-weight:700;margin-left:4px;white-space:nowrap}
+.espn-verified{color:var(--green);font-size:10px;margin-left:4px}
+
 /* RESPONSIVE */
 @media(max-width:800px){
   header,main{padding:14px 16px}
@@ -197,11 +204,14 @@ details[open] .reg-summary{border-radius:8px 8px 0 0;border-bottom-color:transpa
 // CONFIG
 // ═══════════════════════════════════════════════════════
 const SEASON = 2026;
+const ESPN_API = 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb';
 const TOP_N  = 10;
-const CACHE_IDS   = `hrd_${SEASON}_res_v3`;
-const CACHE_STATS = `hrd_${SEASON}_stats_v3`;
+const CACHE_IDS   = `hrd_${SEASON}_res_v4`;
+const CACHE_STATS = `hrd_${SEASON}_stats_v4`;
+const CACHE_ESPN  = `hrd_${SEASON}_espn_v4`;
 const TTL_IDS     = 7  * 24 * 60 * 60 * 1000;
 const TTL_STATS   = 30 * 60 * 1000;
+const TTL_ESPN    = 7  * 24 * 60 * 60 * 1000;
 const API = 'https://statsapi.mlb.com/api/v1';
 
 const MONTHS = [
@@ -451,6 +461,68 @@ async function fetchAllStats(resolution, forceRefresh){
 }
 
 // ═══════════════════════════════════════════════════════
+// ESPN — resolve IDs & build profile links for verification
+// ═══════════════════════════════════════════════════════
+async function resolveESPN(resolution) {
+  const cached = cGet(CACHE_ESPN, TTL_ESPN);
+  if (cached) return cached;
+
+  // fullNameLower → { espnId, espnName, espnUrl }
+  const espnMap = {};
+
+  // Step 1: Try bulk fetch (all active MLB athletes in one call)
+  try {
+    setDetail('Loading ESPN player data…');
+    const data = await jFetch(`${ESPN_API}/athletes?limit=1000&active=true`);
+    const items = data.items || data.athletes || [];
+    items.forEach(p => {
+      const name = (p.fullName || p.displayName || '').toLowerCase().trim();
+      if (!name) return;
+      const slug = name.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      espnMap[name] = { espnId: String(p.id), espnName: p.fullName || p.displayName, espnUrl: `https://www.espn.com/mlb/player/_/id/${p.id}/${slug}` };
+    });
+  } catch(e) { console.warn('ESPN bulk fetch failed:', e.message); }
+
+  // Step 2: For any player not found in bulk, try individual search
+  const needed = Object.values(resolution).filter(r => r.id && !espnMap[r.full?.toLowerCase()]);
+  if (needed.length) {
+    setDetail(`ESPN: searching ${needed.length} remaining players…`);
+    const BATCH = 8;
+    for (let i = 0; i < needed.length; i += BATCH) {
+      await Promise.all(needed.slice(i, i + BATCH).map(async res => {
+        try {
+          const q = encodeURIComponent(res.full);
+          const data = await jFetch(`${ESPN_API}/athletes?search=${q}&limit=10`);
+          const items = data.items || data.athletes || [];
+          // Prefer exact full name match, fall back to first result
+          const match = items.find(p => (p.fullName||p.displayName||'').toLowerCase() === res.full.toLowerCase())
+                     || items.find(p => (p.displayName||'').toLowerCase().includes(res.full.split(' ').pop().toLowerCase()))
+                     || items[0];
+          if (match) {
+            const slug = (match.fullName||match.displayName||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+            espnMap[res.full.toLowerCase()] = { espnId: String(match.id), espnName: match.fullName || match.displayName, espnUrl: `https://www.espn.com/mlb/player/_/id/${match.id}/${slug}` };
+          }
+        } catch {}
+      }));
+    }
+  }
+
+  cSet(CACHE_ESPN, espnMap);
+  return espnMap;
+}
+
+// Build a clickable ESPN link for a roster name, or plain text if not found
+function playerLink(rosterName, cssClass='') {
+  const res = gResolution[rosterName] || {};
+  const espn = gESPN[res.full?.toLowerCase()] || {};
+  const displayName = espn.espnName || res.full || rosterName;
+  if (espn.espnUrl) {
+    return `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink ${cssClass}" title="View ${displayName} on ESPN">${displayName}</a>`;
+  }
+  return `<span class="${cssClass}">${displayName}</span>`;
+}
+
+// ═══════════════════════════════════════════════════════
 // SCORING  — top 10 recalculated independently each month
 // ═══════════════════════════════════════════════════════
 function calcPeriod(players, resolution, stats, monthNums){
@@ -478,7 +550,7 @@ function calcStandings(resolution, stats){
 // ═══════════════════════════════════════════════════════
 // MAIN
 // ═══════════════════════════════════════════════════════
-let gResolution={}, gStats={}, gStandings=[];
+let gResolution={}, gStats={}, gStandings=[], gESPN={};
 
 function setDetail(msg){const e=document.getElementById('load-detail');if(e)e.textContent=msg}
 
@@ -489,6 +561,7 @@ async function loadData(forceRefresh=false){
   try{
     gResolution=await resolveAllPlayers(forceRefresh);
     gStats=await fetchAllStats(gResolution,forceRefresh);
+    gESPN=await resolveESPN(gResolution);
     gStandings=calcStandings(gResolution,gStats);
 
     document.getElementById('last-updated').textContent=
@@ -628,7 +701,7 @@ function buildMonthView(pdata, mi, period){
     card.className=`pc ${counting?'counting':''}`;
     card.innerHTML=`
       <div class="pc-rank">${i+1}</div>
-      <div class="pc-name">${p.name}</div>
+      <div class="pc-name">${playerLink(p.name)}</div>
       <div class="pc-right">
         ${counting?'<span class="top10-tag">TOP 10</span>':''}
         <span class="pc-hr">${p.hrs||'0'}</span>
@@ -657,7 +730,7 @@ function buildSeasonTable(pdata, periods){
   </tr></thead><tbody>`;
 
   sorted.forEach(p=>{
-    html+=`<tr><td class="pn">${p.name}</td>`;
+    html+=`<tr><td class="pn">${playerLink(p.name)}</td>`;
     p.mHrs.forEach((h,mi)=>{
       const counts=top10ByMonth[mi].has(p.name);
       if(h===0) html+=`<td class="cell-zero">—</td>`;
@@ -688,9 +761,13 @@ function renderRegistry(){
     const r=gResolution[name]||{};
     const srcClass=r.source==='registry'?'src-registry':r.source==='api'?'src-api':'src-notfound';
     const srcLabel=r.source==='registry'?'Hardcoded':r.source==='api'?'API Match':'Not Found';
+    const espn=gESPN[r.full?.toLowerCase()]||{};
+    const nameDisplay=espn.espnUrl
+      ? `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink" title="View on ESPN">${espn.espnName||r.full}</a><span class="espn-badge">ESPN</span>`
+      : (r.full||'—');
     return `<div class="reg-item">
       <span class="reg-roster">${name}</span>
-      <span class="reg-full">${r.full||'—'}${r.team&&r.team!=='?'?` (${r.team})`:''}${r.id?` #${r.id}`:''}</span>
+      <span class="reg-full">${nameDisplay}${r.team&&r.team!=='?'?` (${r.team})`:''}${r.id?` #${r.id}`:''}</span>
       <span class="src-badge ${srcClass}">${srcLabel}</span>
     </div>`;
   }).join('');
