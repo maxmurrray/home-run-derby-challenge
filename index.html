@@ -1,220 +1,419 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home Run Derby Challenge 2026</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@800;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-<script>
-tailwind.config = {
-  darkMode: "class",
-  theme: {
-    extend: {
-      colors: {
-        "surface":                   "#0a1422",
-        "surface-dim":               "#060e1c",
-        "surface-container-lowest":  "#060e1c",
-        "surface-container-low":     "#131c2a",
-        "surface-container":         "#17202e",
-        "surface-container-high":    "#222a39",
-        "surface-container-highest": "#2c3545",
-        "on-surface":                "#dae3f7",
-        "primary-container":         "#e31837",
-        "on-primary-container":      "#ffffff",
-        "secondary":                 "#ffd65b",
-        "secondary-fixed":           "#ffe08b",
-        "outline-variant":           "#5d3f3e",
-        "tertiary-fixed":            "#d8e2ff",
-      },
-      fontFamily: {
-        "headline": ["Epilogue", "sans-serif"],
-        "body":     ["Inter",    "sans-serif"],
-      },
-      borderRadius: {
-        "DEFAULT": "0.125rem",
-        "sm":  "0.125rem",
-        "md":  "0.25rem",
-        "lg":  "0.375rem",
-        "xl":  "0.5rem",
-        "2xl": "0.75rem",
-        "full":"9999px",
-      },
-    }
-  }
-}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
-  .tabular-nums { font-variant-numeric: tabular-nums; }
-  .bg-glow-red { background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(227,24,55,.14) 0%, transparent 70%); }
-  ::-webkit-scrollbar { display: none; }
-  .no-scroll { scrollbar-width: none; }
+/* ── THEME VARIABLES ─────────────────────────────────── */
+:root, [data-theme="light"] {
+  --bg:          #ffffff;
+  --bg-2:        #f8f9fa;
+  --bg-3:        #f1f3f5;
+  --border:      #e2e2e2;
+  --text:        #111111;
+  --text-muted:  #777777;
+  --text-dim:    #bbbbbb;
+  --accent:      #d10000;
+  --col-hi:      #eef3fd;
+  --col-hi-text: #1a56db;
+  --gold:        #d4a017;
+  --silver:      #8a929c;
+  --bronze:      #a0632a;
+  --row-hover:   #f4f7ff;
+  --detail-bg:   #fafafa;
+  --logo:        url('logo-light.svg');
+}
+[data-theme="dark"] {
+  --bg:          #0a1422;
+  --bg-2:        #131c2a;
+  --bg-3:        #17202e;
+  --border:      rgba(255,255,255,0.08);
+  --text:        #dae3f7;
+  --text-muted:  #6878a0;
+  --text-dim:    #3a4a66;
+  --accent:      #e31837;
+  --col-hi:      rgba(26,86,219,0.12);
+  --col-hi-text: #7baaf7;
+  --gold:        #ffd65b;
+  --silver:      #b0b8c4;
+  --bronze:      #cd7f32;
+  --row-hover:   rgba(255,255,255,0.04);
+  --detail-bg:   #0c1420;
+  --logo:        url('logo-dark.svg');
+}
 
-  /* ESPN links */
-  .plink { color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,214,91,.35); transition: color .15s, border-color .15s; }
-  .plink:hover { color: #ffd65b; border-bottom-color: #ffd65b; }
-  .counting .plink:hover { color: #fff; }
-  .espn-badge { font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 3px; background: rgba(227,24,55,.15); color: #ff6b47; white-space: nowrap; }
+/* ── RESET ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
 
-  /* Detail panel */
-  .detail-panel { display: none; }
-  .detail-panel.open { display: block; }
-  .chevron-open { transform: rotate(180deg); }
+/* ── HEADER ──────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 50;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo-img { height: 50px; width: auto; display: block; }
+.info-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.info-btn:hover { border-color: var(--text-muted); color: var(--text); }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.live-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: livepulse 1.6s ease-in-out infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+#last-updated { font-size: 11px; color: var(--text-dim); }
+.icon-btn {
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: none; color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; transition: all 0.15s;
+}
+.icon-btn:hover { background: var(--bg-2); color: var(--text); }
+.icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-  /* Registry panel */
-  .reg-body { display: none; }
-  .reg-body.open { display: block; }
+/* ── MONTH NAV ───────────────────────────────────────── */
+.month-nav {
+  display: flex; gap: 6px;
+  padding: 10px 28px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+  background: var(--bg);
+}
+.month-nav::-webkit-scrollbar { display: none; }
+.month-btn {
+  flex-shrink: 0;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: none; color: var(--text-muted);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  transition: all 0.15s;
+}
+.month-btn:hover { background: var(--bg-2); color: var(--text); }
+.month-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-  /* Spinner */
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spin { animation: spin .7s linear infinite; }
+/* ── RULES BAR ───────────────────────────────────────── */
+.rules-bar {
+  padding: 7px 28px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 24px; flex-wrap: wrap;
+}
+.rules-bar span { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
-  /* Live ping */
-  @keyframes ping { 75%,100% { transform: scale(2); opacity: 0; } }
-  .live-ping { animation: ping 1.5s cubic-bezier(0,0,.2,1) infinite; }
+/* ── TABLE ───────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+table.standings {
+  width: 100%; border-collapse: collapse;
+  min-width: 600px;
+}
+table.standings thead th {
+  padding: 9px 14px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  user-select: none;
+}
+th.num, td.num { text-align: right; }
+th.sorted, td.sorted {
+  background: var(--col-hi);
+  color: var(--col-hi-text);
+}
+table.standings tbody tr {
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+table.standings tbody tr.data-row:hover { background: var(--row-hover); }
+table.standings tbody tr.expanded-row > td:first-child { border-left: 3px solid var(--accent); }
+table.standings td {
+  padding: 10px 14px; white-space: nowrap;
+}
+.td-rank {
+  width: 42px; text-align: center;
+  font-size: 13px; font-weight: 700;
+  color: var(--text-muted);
+}
+.td-rank.r1 { color: var(--gold); }
+.td-rank.r2 { color: var(--silver); }
+.td-rank.r3 { color: var(--bronze); }
+.td-name { min-width: 160px; }
+.team-label {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 4px;
+}
+.chevron {
+  font-size: 10px; color: var(--text-dim);
+  transition: transform 0.2s; display: inline-block;
+}
+.expanded-row .chevron { transform: rotate(180deg); }
+td.num {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px; color: var(--text);
+}
+td.num.zero { color: var(--text-dim); }
+td.num.total-cell { font-weight: 800; font-size: 15px; }
+td.num.sorted { font-weight: 700; }
 
-  /* Left rank accent */
-  .rank-accent-gold   { border-left: 3px solid #ffd65b; }
-  .rank-accent-silver { border-left: 3px solid #b0b8c4; }
-  .rank-accent-bronze { border-left: 3px solid #cd7f32; }
+/* ── DETAIL ROW ──────────────────────────────────────── */
+tr.detail-row td {
+  padding: 0 !important;
+  background: var(--detail-bg);
+  cursor: default;
+}
+tr.detail-row:hover { background: var(--detail-bg) !important; }
+.detail-inner {
+  padding: 14px 20px 18px 56px;
+  border-top: 1px solid var(--border);
+}
+.detail-tabs {
+  display: flex; gap: 4px; margin-bottom: 12px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.detail-tabs::-webkit-scrollbar { display: none; }
+.dtab {
+  flex-shrink: 0;
+  padding: 3px 12px; border-radius: 999px;
+  border: 1px solid var(--border);
+  background: none; color: var(--text-muted);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: all 0.15s;
+}
+.dtab:hover { background: var(--bg-2); color: var(--text); }
+.dtab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-  /* Season table */
-  .stbl { width:100%; border-collapse:collapse; font-size:11px; }
-  .stbl th { padding:6px 8px; background:#17202e; color:#6878a0; font-size:9px; letter-spacing:.05em; text-transform:uppercase; text-align:center; font-weight:700; white-space:nowrap; }
-  .stbl th:first-child { text-align:left; }
-  .stbl td { padding:6px 8px; border-bottom:1px solid rgba(255,255,255,.04); text-align:center; color:#6878a0; }
-  .stbl td.pn { text-align:left; color:#dae3f7; font-weight:500; }
-  .stbl tr.score-row td { background:rgba(255,214,91,.07); color:#ffd65b; font-weight:700; border-top:1px solid rgba(255,214,91,.15); }
-  .stbl .cell-counts { background:rgba(255,214,91,.12); color:#ffd65b; font-weight:700; border-radius:3px; padding:1px 4px; }
-  .stbl .cell-zero { color:rgba(104,120,160,.3); }
+table.roster {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+table.roster th {
+  padding: 5px 10px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+table.roster th.num { text-align: right; }
+table.roster td {
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+table.roster td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.roster tr:last-child td { border-bottom: none; }
+table.roster tr.counting td { color: var(--text); }
+table.roster tr.not-counting td { color: var(--text-muted); }
+.star { color: var(--gold); font-size: 9px; margin-left: 2px; }
+.plink {
+  color: inherit; text-decoration: none;
+  border-bottom: 1px dotted var(--border);
+  transition: border-color 0.15s;
+}
+.plink:hover { border-color: var(--text-muted); }
+
+/* ── LOADING / ERROR ─────────────────────────────────── */
+.loading {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 20px; gap: 12px;
+}
+.spinner {
+  width: 26px; height: 26px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading p { font-size: 13px; color: var(--text-muted); }
+.loading small { font-size: 11px; color: var(--text-dim); }
+.error-box {
+  margin: 24px 28px;
+  padding: 16px 20px;
+  border: 1px solid rgba(211,0,0,0.25);
+  background: rgba(211,0,0,0.05);
+  border-radius: 8px; color: var(--accent);
+}
+.error-box p { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.error-box button {
+  padding: 6px 16px; background: var(--accent);
+  color: #fff; border: none; border-radius: 6px;
+  font-size: 12px; font-weight: 700;
+}
+
+/* ── INFO MODAL ──────────────────────────────────────── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 200;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px; max-width: 400px; width: 90%;
+}
+.modal h2 {
+  font-size: 15px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+.modal p { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
+.modal-close {
+  margin-top: 16px; padding: 8px 20px;
+  background: var(--text); color: var(--bg);
+  border: none; border-radius: 6px;
+  font-size: 13px; font-weight: 700;
+}
+
+/* ── MOBILE ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .header { padding: 12px 16px; }
+  .logo-img { height: 38px; }
+  .month-nav, .rules-bar { padding: 8px 16px; }
+  .rules-bar { display: none; }
+  .detail-inner { padding: 12px 14px; }
+  table.standings td, table.standings th { padding: 8px 10px; }
+}
 </style>
 </head>
-<body class="bg-surface text-on-surface font-body">
+<body>
 
-<!-- ═══ FIXED HEADER ═══ -->
-<header class="fixed top-0 w-full z-50 bg-gradient-to-r from-[#060e1c] via-[#0d1830] to-[#060e1c] border-b-[3px] border-primary-container shadow-[0_4px_24px_rgba(227,24,55,.18)] bg-glow-red">
-  <div class="flex items-center justify-between px-4 h-[72px]">
-    <div class="flex items-center gap-3">
-      <div class="h-12 w-12 rounded-xl bg-white flex items-center justify-center p-1 shadow-lg flex-shrink-0 overflow-hidden">
-        <img src="Logo.jpeg" alt="HRD Logo" class="h-full w-full object-contain">
-      </div>
-      <h1 class="text-lg font-headline font-black text-white uppercase tracking-tight leading-none">
-        <span class="text-primary-container">HOMERUN</span><br>CHALLENGE
-      </h1>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="flex flex-col items-end">
-        <div class="flex items-center gap-1.5">
-          <span class="relative flex h-2 w-2">
-            <span class="live-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-container"></span>
-          </span>
-          <span class="text-[10px] font-black uppercase tracking-widest text-primary-container">LIVE</span>
-        </div>
-        <span id="last-updated" class="text-[10px] text-slate-400 tabular-nums">—</span>
-      </div>
-      <button id="refresh-btn" class="p-2 rounded-xl bg-surface-container-highest text-on-surface active:scale-95 transition-transform disabled:opacity-40">
-        <span class="material-symbols-outlined text-[20px]">refresh</span>
-      </button>
-    </div>
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <img id="logo-img" src="logo-light.svg" alt="Home Run Challenge" class="logo-img">
+    <button class="info-btn" onclick="document.getElementById('info-modal').classList.add('open')" title="How it works">i</button>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <span id="last-updated">—</span>
+    <button class="icon-btn" id="theme-btn" title="Toggle theme" onclick="toggleTheme()">☀</button>
+    <button class="icon-btn" id="refresh-btn" title="Refresh" onclick="loadData(true)">↻</button>
   </div>
 </header>
 
-<main class="pt-[72px] pb-20">
-
-  <!-- ═══ STATS STRIP ═══ -->
-  <div id="stats-strip" class="flex overflow-x-auto no-scroll gap-3 px-4 py-4 -mb-1">
-    <!-- populated by renderStatsStrip() -->
-    <div class="min-w-[150px] flex-shrink-0 bg-surface-container-low border-l-4 border-primary-container p-3 rounded-r-lg animate-pulse">
-      <div class="h-2 bg-surface-container-highest rounded w-20 mb-2"></div>
-      <div class="h-5 bg-surface-container-highest rounded w-24"></div>
-    </div>
-    <div class="min-w-[150px] flex-shrink-0 bg-surface-container-low border-l-4 border-primary-container p-3 rounded-r-lg animate-pulse">
-      <div class="h-2 bg-surface-container-highest rounded w-20 mb-2"></div>
-      <div class="h-5 bg-surface-container-highest rounded w-24"></div>
-    </div>
-    <div class="min-w-[150px] flex-shrink-0 bg-surface-container-low border-l-4 border-primary-container p-3 rounded-r-lg animate-pulse">
-      <div class="h-2 bg-surface-container-highest rounded w-20 mb-2"></div>
-      <div class="h-5 bg-surface-container-highest rounded w-24"></div>
-    </div>
-  </div>
-
-  <!-- ═══ RULES STRIP ═══ -->
-  <div class="mx-4 mb-3 bg-surface-container-low rounded-xl p-3 flex flex-wrap gap-x-4 gap-y-1">
-    <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">📅 6 Periods: M1 Mar/Apr · M2 May · M3 Jun · M4 Jul · M5 Aug · M6 Sep</span>
-    <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">🏆 Top 10 players per month count · Resets each month</span>
-  </div>
-
-  <!-- ═══ STICKY MONTH NAV ═══ -->
-  <nav id="month-nav" class="sticky top-[72px] z-40 bg-surface/90 backdrop-blur-md py-2 px-4 border-b border-white/5">
-    <div class="flex gap-2 overflow-x-auto no-scroll">
-      <button data-period="" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-primary-container text-white text-[10px] font-black uppercase tracking-widest shadow-sm shadow-primary-container/30">ALL</button>
-      <button data-period="0" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container-high text-slate-400 text-[10px] font-black uppercase tracking-widest">M1 Mar/Apr</button>
-      <button data-period="1" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container-high text-slate-400 text-[10px] font-black uppercase tracking-widest">M2 May</button>
-      <button data-period="2" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container-high text-slate-400 text-[10px] font-black uppercase tracking-widest">M3 Jun</button>
-      <button data-period="3" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container-high text-slate-400 text-[10px] font-black uppercase tracking-widest">M4 Jul</button>
-      <button data-period="4" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container-high text-slate-400 text-[10px] font-black uppercase tracking-widest">M5 Aug</button>
-      <button data-period="5" class="month-btn flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container-high text-slate-400 text-[10px] font-black uppercase tracking-widest">M6 Sep</button>
-    </div>
-  </nav>
-
-  <!-- ═══ STANDINGS ═══ -->
-  <div id="standings-mount" class="px-4 pt-4 space-y-2">
-    <div class="flex flex-col items-center justify-center py-16">
-      <div class="w-8 h-8 border-2 border-surface-container-high border-t-primary-container rounded-full spin mb-4"></div>
-      <p class="text-slate-400 text-sm">Fetching live MLB stats…</p>
-      <p id="load-detail" class="text-slate-600 text-xs mt-1"></p>
-    </div>
-  </div>
-
-  <!-- ═══ PLAYER REGISTRY ═══ -->
-  <div id="reg-panel" class="px-4 pt-6 pb-2" style="display:none">
-    <div class="bg-surface-container-highest rounded-xl overflow-hidden">
-      <button id="reg-toggle" class="w-full flex justify-between items-center p-4">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-secondary text-[20px]">manage_search</span>
-          <h2 class="font-headline font-black uppercase text-sm tracking-widest text-white">Player Registry</h2>
-        </div>
-        <span id="reg-chevron" class="material-symbols-outlined text-slate-400 transition-transform">expand_more</span>
-      </button>
-      <div id="reg-body" class="reg-body px-4 pb-4">
-        <div class="flex flex-wrap gap-2 mb-3">
-          <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[8px] font-black uppercase border border-emerald-500/20">Hardcoded</span><span class="text-[10px] text-slate-500">Pre-verified ID</span>
-          <span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[8px] font-black uppercase border border-blue-500/20">API</span><span class="text-[10px] text-slate-500">Matched via MLB API</span>
-          <span class="px-2 py-0.5 rounded-full bg-primary-container/10 text-primary-container text-[8px] font-black uppercase border border-primary-container/20">Not Found</span><span class="text-[10px] text-slate-500">Stats = 0</span>
-        </div>
-        <div id="reg-grid" class="grid grid-cols-1 gap-1.5"></div>
-      </div>
-    </div>
-  </div>
-
-</main>
-
-<!-- ═══ BOTTOM NAV ═══ -->
-<nav class="fixed bottom-0 w-full z-50 bg-surface-container-low/90 backdrop-blur-xl border-t border-white/5">
-  <div class="flex justify-around items-center px-2 pb-safe pt-2 h-16">
-    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex flex-col items-center justify-center bg-primary-container text-white rounded-xl px-4 py-1.5 active:scale-90 transition-transform">
-      <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">leaderboard</span>
-      <span class="font-body font-semibold text-[10px] uppercase tracking-wider mt-0.5">Standings</span>
-    </button>
-    <button onclick="loadData(true)" class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5 active:scale-90 transition-transform">
-      <span class="material-symbols-outlined text-[20px]">sensors</span>
-      <span class="font-body font-semibold text-[10px] uppercase tracking-wider mt-0.5">Refresh</span>
-    </button>
-    <button class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5">
-      <span class="material-symbols-outlined text-[20px]">sports_baseball</span>
-      <span class="font-body font-semibold text-[10px] uppercase tracking-wider mt-0.5">Rules</span>
-    </button>
-    <button onclick="openRegistry()" class="flex flex-col items-center justify-center text-slate-400 px-4 py-1.5 active:scale-90 transition-transform">
-      <span class="material-symbols-outlined text-[20px]">app_registration</span>
-      <span class="font-body font-semibold text-[10px] uppercase tracking-wider mt-0.5">Registry</span>
-    </button>
-  </div>
+<!-- MONTH NAV -->
+<nav class="month-nav">
+  <button class="month-btn active" data-period="">ALL</button>
+  <button class="month-btn" data-period="0">M1 Mar/Apr</button>
+  <button class="month-btn" data-period="1">M2 May</button>
+  <button class="month-btn" data-period="2">M3 Jun</button>
+  <button class="month-btn" data-period="3">M4 Jul</button>
+  <button class="month-btn" data-period="4">M5 Aug</button>
+  <button class="month-btn" data-period="5">M6 Sep</button>
 </nav>
 
+<!-- RULES -->
+<div class="rules-bar">
+  <span>6 Periods: M1 Mar/Apr · M2 May · M3 Jun · M4 Jul · M5 Aug · M6 Sep</span>
+  <span>Top 10 players per month count · Resets each month</span>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+  <table class="standings">
+    <thead>
+      <tr>
+        <th class="td-rank">RK</th>
+        <th>NAME</th>
+        <th class="num sorted" id="th-total">TOTAL</th>
+        <th class="num" id="th-m1">M1</th>
+        <th class="num" id="th-m2">M2</th>
+        <th class="num" id="th-m3">M3</th>
+        <th class="num" id="th-m4">M4</th>
+        <th class="num" id="th-m5">M5</th>
+        <th class="num" id="th-m6">M6</th>
+      </tr>
+    </thead>
+    <tbody id="standings-body">
+      <tr><td colspan="9">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Fetching live MLB stats…</p>
+          <small id="load-detail"></small>
+        </div>
+      </td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- INFO MODAL -->
+<div class="modal-overlay" id="info-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <h2>How It Works</h2>
+    <p>6 scoring periods run through the MLB season: Mar/Apr, May, Jun, Jul, Aug, and Sep.</p>
+    <p>Each month, the <strong>top 10 home run hitters</strong> from each team's 13-player roster count toward that team's score. Scoring resets every month.</p>
+    <p>Your season total is the sum of all 6 monthly scores. Click any team to see their full roster breakdown.</p>
+    <button class="modal-close" onclick="document.getElementById('info-modal').classList.remove('open')">Got it</button>
+  </div>
+</div>
+
 <script>
+// ═══════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  html.dataset.theme = next;
+  document.getElementById('theme-btn').textContent = next === 'dark' ? '☾' : '☀';
+  document.getElementById('logo-img').src = next === 'dark' ? 'logo-dark.svg' : 'logo-light.svg';
+  localStorage.setItem('hrd_theme', next);
+}
+(function initTheme() {
+  const saved = localStorage.getItem('hrd_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.dataset.theme = theme;
+  document.getElementById('theme-btn').textContent = theme === 'dark' ? '☾' : '☀';
+  document.getElementById('logo-img').src = theme === 'dark' ? 'logo-dark.svg' : 'logo-light.svg';
+})();
+
 // ═══════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════
@@ -239,7 +438,7 @@ const MONTHS = [
 ];
 
 // ═══════════════════════════════════════════════════════
-// ROSTERS — 30 teams × 13 players
+// ROSTERS — unchanged from original
 // ═══════════════════════════════════════════════════════
 const ROSTERS = {
   "Team Stein":        ["Ohtani","Suarez","Caminero","Devers","Busch","Wood","Olson","Tatis","Witt","Wallner","Acuna","Chourio","Henderson"],
@@ -275,7 +474,7 @@ const ROSTERS = {
 };
 
 // ═══════════════════════════════════════════════════════
-// PLAYER REGISTRY — hardcoded MLB IDs for known players
+// PLAYER REGISTRY — unchanged
 // ═══════════════════════════════════════════════════════
 const PLAYER_REGISTRY = {
   "Ohtani":      {id:660271, full:"Shohei Ohtani",        team:"LAD"},
@@ -357,13 +556,13 @@ const DISAMBIG = {
 };
 
 // ═══════════════════════════════════════════════════════
-// CACHE
+// CACHE — unchanged
 // ═══════════════════════════════════════════════════════
 function cGet(k,ttl){try{const r=localStorage.getItem(k);if(!r)return null;const{ts,d}=JSON.parse(r);return Date.now()-ts>ttl?null:d}catch{return null}}
 function cSet(k,d){try{localStorage.setItem(k,JSON.stringify({ts:Date.now(),d}))}catch{}}
 
 // ═══════════════════════════════════════════════════════
-// MLB API
+// MLB API — unchanged
 // ═══════════════════════════════════════════════════════
 async function jFetch(url){const r=await fetch(url);if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}
 
@@ -400,9 +599,9 @@ async function resolveAllPlayers(forceRefresh){
       const d=DISAMBIG[name];
       let matched=null;
       if(cands.length===1){matched=cands[0];}
-      else if(cands.length>1 && d){
+      else if(cands.length>1&&d){
         if(d.first) matched=cands.find(p=>(p.firstName||'').toLowerCase().startsWith(d.first.toLowerCase()));
-        if(!matched && d.team){matched=cands.find(p=>{const tn=(p.currentTeam?.name||'').toLowerCase();const ta=(p.currentTeam?.abbreviation||'').toLowerCase();return ta===d.team.toLowerCase()||tn.includes(d.team.toLowerCase());});}
+        if(!matched&&d.team){matched=cands.find(p=>{const tn=(p.currentTeam?.name||'').toLowerCase();const ta=(p.currentTeam?.abbreviation||'').toLowerCase();return ta===d.team.toLowerCase()||tn.includes(d.team.toLowerCase());});}
         if(!matched) matched=cands[0];
       } else if(cands.length>1){matched=cands[0];}
       if(matched){result[name]={id:matched.id,full:matched.fullName||`${matched.firstName||''} ${matched.lastName||''}`.trim(),team:matched.currentTeam?.abbreviation||matched.currentTeam?.name||'?',source:'api'};}
@@ -420,7 +619,7 @@ async function fetchMonthlyStats(id){
   return out;
 }
 
-async function fetchAllStats(resolution, forceRefresh){
+async function fetchAllStats(resolution,forceRefresh){
   if(!forceRefresh){const c=cGet(CACHE_STATS,TTL_STATS);if(c)return c}
   const ids=[...new Set(Object.values(resolution).filter(r=>r.id).map(r=>r.id))];
   const out={};
@@ -437,9 +636,9 @@ async function fetchAllStats(resolution, forceRefresh){
 }
 
 // ═══════════════════════════════════════════════════════
-// ESPN
+// ESPN — unchanged
 // ═══════════════════════════════════════════════════════
-function normName(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+function normName(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
 
 async function resolveESPN(resolution){
   const cached=cGet(CACHE_ESPN,TTL_ESPN);
@@ -483,16 +682,17 @@ async function resolveESPN(resolution){
   return espnMap;
 }
 
-function playerLink(rosterName,cssClass=''){
+function playerLink(rosterName){
   const res=gResolution[rosterName]||{};
   const espn=gESPN[normName(res.full)]||{};
   const displayName=espn.espnName||res.full||rosterName;
-  if(espn.espnUrl) return `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink ${cssClass}" title="View on ESPN">${displayName}</a>`;
-  return `<span class="${cssClass}">${displayName}</span>`;
+  const team=res.team&&res.team!=='?'?` <span style="font-size:10px;color:var(--text-muted);font-weight:500">${res.team}</span>`:'';
+  if(espn.espnUrl) return `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink">${displayName}</a>${team}`;
+  return `${displayName}${team}`;
 }
 
 // ═══════════════════════════════════════════════════════
-// SCORING
+// SCORING — unchanged
 // ═══════════════════════════════════════════════════════
 function calcPeriod(players,resolution,stats,monthNums){
   const entries=players.map(name=>{const id=resolution[name]?.id;const hrs=id?monthNums.reduce((s,m)=>s+(stats[id]?.[m]||0),0):0;return{name,hrs};});
@@ -511,127 +711,95 @@ function calcStandings(resolution,stats){
 }
 
 // ═══════════════════════════════════════════════════════
-// GLOBALS & HELPERS
+// GLOBALS
 // ═══════════════════════════════════════════════════════
 let gResolution={}, gStats={}, gStandings=[], gESPN={}, gSelectedPeriod=null;
+let gOpenTeam=null;
 
 function setDetail(msg){const e=document.getElementById('load-detail');if(e)e.textContent=msg;}
 
-function initials(name){
-  const res=gResolution[name]||{};
-  const full=res.full||name;
-  const parts=full.split(' ').filter(w=>w.length>0);
-  if(parts.length===1) return parts[0][0]||'?';
-  return (parts[0][0]+(parts[parts.length-1][0]||'')).toUpperCase();
-}
-
 // ═══════════════════════════════════════════════════════
-// RENDER — STATS STRIP
-// ═══════════════════════════════════════════════════════
-function renderStatsStrip(){
-  if(!gStandings.length) return;
-  const leader=gStandings[0];
-  const m1Leader=[...gStandings].sort((a,b)=>b.periods[0].score-a.periods[0].score)[0];
-  const totalHRs=Object.values(gStats).reduce((sum,md)=>sum+Object.values(md).reduce((s,v)=>s+v,0),0);
-  const strip=document.getElementById('stats-strip');
-  strip.innerHTML=`
-    <div class="min-w-[150px] flex-shrink-0 bg-surface-container-low border-l-4 border-primary-container p-3 rounded-r-lg">
-      <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Season Leader</p>
-      <div class="flex items-baseline justify-between gap-2">
-        <span class="text-sm font-bold text-on-surface truncate">${leader.team}</span>
-        <span class="text-xl font-black text-secondary tabular-nums font-headline">${leader.total} <span class="text-[9px] uppercase font-bold text-slate-500">HR</span></span>
-      </div>
-    </div>
-    <div class="min-w-[150px] flex-shrink-0 bg-surface-container-low border-l-4 border-primary-container p-3 rounded-r-lg">
-      <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Mar/Apr Leader</p>
-      <div class="flex items-baseline justify-between gap-2">
-        <span class="text-sm font-bold text-on-surface truncate">${m1Leader.team}</span>
-        <span class="text-xl font-black text-secondary tabular-nums font-headline">${m1Leader.periods[0].score} <span class="text-[9px] uppercase font-bold text-slate-500">HR</span></span>
-      </div>
-    </div>
-    <div class="min-w-[150px] flex-shrink-0 bg-surface-container-low border-l-4 border-primary-container p-3 rounded-r-lg">
-      <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Total HRs Tracked</p>
-      <div class="flex items-baseline justify-between gap-2">
-        <span class="text-sm font-bold text-on-surface">All Rosters</span>
-        <span class="text-xl font-black text-secondary tabular-nums font-headline">${totalHRs}</span>
-      </div>
-    </div>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// RENDER — STANDINGS LEADERBOARD
+// RENDER — STANDINGS TABLE
 // ═══════════════════════════════════════════════════════
 function renderStandings(){
-  const mount=document.getElementById('standings-mount');
-  const displayData=gSelectedPeriod===null
+  const body=document.getElementById('standings-body');
+  body.innerHTML='';
+
+  // Sort by selected period or season total
+  const sorted=gSelectedPeriod===null
     ? [...gStandings]
     : [...gStandings].sort((a,b)=>b.periods[gSelectedPeriod].score-a.periods[gSelectedPeriod].score||a.team.localeCompare(b.team));
 
-  mount.innerHTML='';
-  const container=document.createElement('div');
-  container.className='space-y-2';
+  // Update header highlight
+  document.querySelectorAll('table.standings thead th').forEach(th=>th.classList.remove('sorted'));
+  const activeThId=gSelectedPeriod===null?'th-total':`th-m${gSelectedPeriod+1}`;
+  document.getElementById(activeThId)?.classList.add('sorted');
 
-  displayData.forEach((row,i)=>{
+  sorted.forEach((row,i)=>{
     const rank=i+1;
     const score=gSelectedPeriod===null?row.total:row.periods[gSelectedPeriod].score;
-    const rankColor=rank===1?'text-secondary':rank===2?'text-slate-300':rank===3?'text-[#cd7f32]':'text-slate-500';
-    const accentClass=rank===1?'rank-accent-gold':rank===2?'rank-accent-silver':rank===3?'rank-accent-bronze':'';
+    const rankClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
+    const isOpen=gOpenTeam===row.team;
 
-    const wrapper=document.createElement('div');
-    wrapper.className='group';
+    // Main row
+    const tr=document.createElement('tr');
+    tr.className=`data-row${isOpen?' expanded-row':''}`;
+    tr.dataset.team=row.team;
 
-    const card=document.createElement('div');
-    card.className=`relative flex items-center bg-surface-container-low border border-outline-variant/15 rounded-xl p-4 gap-4 cursor-pointer active:bg-surface-container transition-colors overflow-hidden ${accentClass}`;
+    const m=row.periods.map((p,mi)=>{
+      const v=p.score;
+      const isSelected=gSelectedPeriod===mi;
+      const cls=`num${isSelected?' sorted':''}${!v?' zero':''}`;
+      return `<td class="${cls}">${v||'—'}</td>`;
+    }).join('');
 
-    // Ghost watermark
-    const ghost=rank<=3?`<span class="absolute right-14 top-1/2 -translate-y-1/2 font-headline font-black text-6xl ${rankColor} opacity-[0.06] pointer-events-none select-none">${rank}</span>`:'';
+    tr.innerHTML=`
+      <td class="td-rank ${rankClass}">${rank}</td>
+      <td class="td-name">
+        <span class="team-label">
+          ${row.team}
+          <span class="chevron">▾</span>
+        </span>
+      </td>
+      <td class="num total-cell${gSelectedPeriod===null?' sorted':''}">${score||'—'}</td>
+      ${m}`;
 
-    card.innerHTML=`
-      ${ghost}
-      <div class="flex-shrink-0 w-11 h-11 flex items-center justify-center relative">
-        <span class="font-headline font-black ${rank<=3?'text-2xl':'text-lg'} ${rankColor} tabular-nums">${rank<=3?'#'+rank:rank}</span>
-      </div>
-      <div class="flex-grow min-w-0">
-        <h3 class="font-headline font-black text-base tracking-tight text-white uppercase truncate leading-tight">${row.team}</h3>
-        ${gSelectedPeriod!==null?`<p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">${MONTHS[gSelectedPeriod].label} only</p>`:'<p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Season Total</p>'}
-      </div>
-      <div class="text-right flex-shrink-0">
-        <div class="text-2xl font-black text-secondary tabular-nums font-headline">${score||0}</div>
-        <div class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">HRS</div>
-      </div>
-      <span class="material-symbols-outlined text-slate-500 group-hover:text-slate-300 transition-all flex-shrink-0 expand-chevron">expand_more</span>`;
+    tr.addEventListener('click',()=>toggleDetail(row,tr));
+    body.appendChild(tr);
 
-    const detailPanel=document.createElement('div');
-    detailPanel.className='detail-panel bg-surface-container-lowest border-x border-b border-outline-variant/10 rounded-b-xl';
-
-    card.addEventListener('click',()=>{
-      const isOpen=detailPanel.classList.contains('open');
-      document.querySelectorAll('.detail-panel.open').forEach(p=>{
-        p.classList.remove('open');
-        p.previousElementSibling?.querySelector('.expand-chevron')?.classList.remove('chevron-open');
-      });
-      if(!isOpen){
-        detailPanel.classList.add('open');
-        card.querySelector('.expand-chevron').classList.add('chevron-open');
-        if(!detailPanel.dataset.built){
-          buildDetail(detailPanel,row);
-          detailPanel.dataset.built='1';
-        }
-      }
-    });
-
-    wrapper.appendChild(card);
-    wrapper.appendChild(detailPanel);
-    container.appendChild(wrapper);
+    // Detail row (if open)
+    if(isOpen){
+      const dtr=document.createElement('tr');
+      dtr.className='detail-row';
+      const dtd=document.createElement('td');
+      dtd.colSpan=9;
+      const inner=document.createElement('div');
+      inner.className='detail-inner';
+      buildDetailInner(inner,row);
+      dtd.appendChild(inner);
+      dtr.appendChild(dtd);
+      body.appendChild(dtr);
+    }
   });
+}
 
-  mount.appendChild(container);
+function toggleDetail(row,tr){
+  const wasOpen=gOpenTeam===row.team;
+  gOpenTeam=wasOpen?null:row.team;
+  renderStandings();
+  if(!wasOpen){
+    // Scroll row into view
+    setTimeout(()=>{
+      const el=document.querySelector(`tr[data-team="${CSS.escape(row.team)}"]`);
+      el?.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },50);
+  }
 }
 
 // ═══════════════════════════════════════════════════════
-// TEAM DETAIL — tab view
+// DETAIL — roster tabs
 // ═══════════════════════════════════════════════════════
-function buildDetail(cell,row){
+function buildDetailInner(container,row){
   const players=ROSTERS[row.team];
   const pdata=players.map(name=>{
     const id=gResolution[name]?.id;
@@ -639,150 +807,101 @@ function buildDetail(cell,row){
     return{name,mHrs,total:mHrs.reduce((s,v)=>s+v,0)};
   });
 
-  const inner=document.createElement('div');
-  inner.className='p-4';
-
+  // Tabs
   const tabs=document.createElement('div');
-  tabs.className='flex gap-2 overflow-x-auto no-scroll pb-3';
-
+  tabs.className='detail-tabs';
   const content=document.createElement('div');
 
-  const tabDefs=[
-    {id:'all',label:'Season'},
-    ...MONTHS.map(m=>({id:m.id,label:m.col}))
-  ];
+  const tabDefs=[{id:'all',label:'Season'},...MONTHS.map(m=>({id:m.id,label:m.col}))];
 
   function showTab(id){
-    tabs.querySelectorAll('button').forEach(b=>{
-      const active=b.dataset.id==id;
-      b.className=`flex-shrink-0 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors ${active?'bg-primary-container text-white':'bg-surface-container-high text-slate-400'}`;
-    });
+    tabs.querySelectorAll('.dtab').forEach(b=>b.classList.toggle('active',b.dataset.id==id));
     content.innerHTML='';
-    if(id==='all'){content.appendChild(buildSeasonTable(pdata,row.periods));}
-    else{const mi=MONTHS.findIndex(m=>m.id===id);content.appendChild(buildMonthView(pdata,mi,row.periods[mi]));}
+    if(id==='all') content.appendChild(buildSeasonRoster(pdata,row.periods));
+    else{
+      const mi=MONTHS.findIndex(m=>m.id===id);
+      content.appendChild(buildMonthRoster(pdata,mi,row.periods[mi]));
+    }
   }
 
   tabDefs.forEach(t=>{
     const btn=document.createElement('button');
-    btn.dataset.id=t.id;
-    btn.textContent=t.label;
+    btn.className='dtab'; btn.dataset.id=t.id; btn.textContent=t.label;
     btn.onclick=()=>showTab(t.id);
     tabs.appendChild(btn);
   });
 
-  inner.appendChild(tabs);
-  inner.appendChild(content);
-  cell.appendChild(inner);
+  container.appendChild(tabs);
+  container.appendChild(content);
   showTab('all');
 }
 
-// ═══════════════════════════════════════════════════════
-// MONTH VIEW
-// ═══════════════════════════════════════════════════════
-function buildMonthView(pdata,mi,period){
-  const mo=MONTHS[mi];
-  const sorted=[...pdata].map(p=>({name:p.name,hrs:p.mHrs[mi]})).sort((a,b)=>b.hrs-a.hrs);
-  const wrap=document.createElement('div');
-
-  const hdr=document.createElement('div');
-  hdr.className='flex items-center justify-between bg-surface-container rounded-lg p-3 mb-3';
-  hdr.innerHTML=`
-    <div>
-      <div class="text-[10px] font-black uppercase tracking-widest text-slate-400">${mo.label} — Top 10</div>
-      <div class="text-[9px] text-slate-600 mt-0.5">Top 10 players by HRs this period</div>
-    </div>
-    <div class="text-right">
-      <div class="text-2xl font-black text-secondary tabular-nums font-headline">${period.score}</div>
-      <div class="text-[9px] uppercase tracking-wider text-slate-500 font-bold">HRS</div>
-    </div>`;
-  wrap.appendChild(hdr);
-
-  const grid=document.createElement('div');
-  grid.className='grid grid-cols-2 gap-2';
-
-  sorted.forEach((p,i)=>{
-    const counting=i<TOP_N;
-    const ini=initials(p.name);
-    const card=document.createElement('div');
-    card.className=`counting flex items-center gap-2 bg-surface-container rounded-lg p-2 ${counting?'counting':''}`;
-    card.innerHTML=`
-      <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black ${counting?'bg-secondary/15 border border-secondary/40 text-secondary':'bg-surface-container-highest text-slate-500'}">
-        ${ini}
-      </div>
-      <div class="flex-grow min-w-0">
-        <div class="text-[10px] font-semibold truncate leading-tight ${counting?'text-secondary':'text-slate-500'}">${playerLink(p.name)}</div>
-        <div class="text-[8px] uppercase tracking-wider font-bold ${counting?'text-primary-container':'text-slate-700'}">${counting?'TOP 10':'#'+(i+1)}</div>
-      </div>
-      <div class="text-lg font-black tabular-nums flex-shrink-0 font-headline ${counting?'text-secondary':'text-slate-600'}">${p.hrs||0}</div>`;
-    grid.appendChild(card);
-  });
-
-  wrap.appendChild(grid);
-  return wrap;
-}
-
-// ═══════════════════════════════════════════════════════
-// SEASON TABLE
-// ═══════════════════════════════════════════════════════
-function buildSeasonTable(pdata,periods){
+function buildSeasonRoster(pdata,periods){
   const sorted=[...pdata].sort((a,b)=>b.total-a.total);
   const top10ByMonth=MONTHS.map((_,mi)=>{
-    const ranked=[...pdata].sort((a,b)=>b.mHrs[mi]-a.mHrs[mi]);
-    return new Set(ranked.slice(0,TOP_N).map(p=>p.name));
+    return new Set([...pdata].sort((a,b)=>b.mHrs[mi]-a.mHrs[mi]).slice(0,TOP_N).map(p=>p.name));
   });
+
   const wrap=document.createElement('div');
-  wrap.className='overflow-x-auto';
-  let html=`<table class="stbl"><thead><tr>
-    <th>Player</th>
-    ${MONTHS.map(m=>`<th>${m.col}</th>`).join('')}
-    <th>Total</th>
-  </tr></thead><tbody>`;
+  let html=`<table class="roster">
+    <thead><tr>
+      <th>Player</th>
+      ${MONTHS.map(m=>`<th class="num">${m.col}</th>`).join('')}
+      <th class="num">Total</th>
+    </tr></thead><tbody>`;
+
   sorted.forEach(p=>{
-    html+=`<tr><td class="pn">${playerLink(p.name)}</td>`;
-    p.mHrs.forEach((h,mi)=>{
-      const counts=top10ByMonth[mi].has(p.name);
-      if(h===0) html+=`<td class="cell-zero">—</td>`;
-      else if(counts) html+=`<td><span class="cell-counts">${h}★</span></td>`;
-      else html+=`<td>${h}</td>`;
-    });
-    html+=`<td><strong class="text-secondary tabular-nums">${p.total||'—'}</strong></td></tr>`;
+    const counting=p.mHrs.some((h,mi)=>h>0&&top10ByMonth[mi].has(p.name));
+    html+=`<tr class="${counting?'counting':'not-counting'}">
+      <td>${playerLink(p.name)}</td>
+      ${p.mHrs.map((h,mi)=>{
+        const counts=h>0&&top10ByMonth[mi].has(p.name);
+        return `<td class="num">${h?`${h}${counts?'<span class="star">★</span>':''}`:'<span style="color:var(--text-dim)">—</span>'}</td>`;
+      }).join('')}
+      <td class="num" style="font-weight:700">${p.total||'<span style="color:var(--text-dim)">—</span>'}</td>
+    </tr>`;
   });
-  html+=`<tr class="score-row"><td>Top-10 Score</td>${periods.map(p=>`<td class="tabular-nums">${p.score}</td>`).join('')}<td class="tabular-nums">${periods.reduce((s,p)=>s+p.score,0)}</td></tr>`;
+
+  html+=`<tr style="border-top:2px solid var(--border)">
+    <td style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Score</td>
+    ${periods.map(p=>`<td class="num" style="font-weight:700;color:var(--col-hi-text)">${p.score||'—'}</td>`).join('')}
+    <td class="num" style="font-weight:800">${periods.reduce((s,p)=>s+p.score,0)}</td>
+  </tr>`;
+
   html+=`</tbody></table>`;
   wrap.innerHTML=html;
   return wrap;
 }
 
-// ═══════════════════════════════════════════════════════
-// PLAYER REGISTRY
-// ═══════════════════════════════════════════════════════
-function renderRegistry(){
-  const grid=document.getElementById('reg-grid');
-  const uniqueNames=[...new Set(Object.values(ROSTERS).flat())].sort();
-  grid.innerHTML=uniqueNames.map(name=>{
-    const r=gResolution[name]||{};
-    const espn=gESPN[normName(r.full)]||{};
-    const parts=(r.full||name).split(' ');
-    const last=parts[parts.length-1].toUpperCase();
-    const first=parts[0]?.[0]||'?';
-    const shortName=parts.length>1?`${last}, ${first}.`:last;
-    const badgeCls=r.source==='registry'
-      ?'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-      :r.source==='api'
-      ?'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-      :'bg-primary-container/10 text-primary-container border border-primary-container/20';
-    const badgeLabel=r.source==='registry'?'Hardcoded':r.source==='api'?'API':'Not Found';
-    const nameDisplay=espn.espnUrl
-      ?`<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink">${espn.espnName||r.full}</a><span class="espn-badge">ESPN</span>`
-      :(r.full||'—');
-    return `<div class="flex items-center justify-between bg-surface-container p-2.5 rounded-lg">
-      <div class="flex items-baseline gap-2 min-w-0 flex-1 mr-2">
-        <span class="text-xs font-black text-white uppercase tracking-tight flex-shrink-0">${shortName}</span>
-        <span class="text-[10px] text-slate-400 truncate">${nameDisplay}${r.team&&r.team!=='?'?' ('+r.team+')':''}</span>
-      </div>
-      <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase flex-shrink-0 ${badgeCls}">${badgeLabel}</span>
-    </div>`;
-  }).join('');
+function buildMonthRoster(pdata,mi,period){
+  const sorted=[...pdata].sort((a,b)=>b.mHrs[mi]-a.mHrs[mi]);
+  const top10=new Set(sorted.slice(0,TOP_N).map(p=>p.name));
+
+  const wrap=document.createElement('div');
+  let html=`<table class="roster">
+    <thead><tr>
+      <th>Player</th>
+      <th class="num">HR</th>
+      <th class="num">Status</th>
+    </tr></thead><tbody>`;
+
+  sorted.forEach(p=>{
+    const counts=top10.has(p.name)&&p.mHrs[mi]>0;
+    html+=`<tr class="${counts?'counting':'not-counting'}">
+      <td>${playerLink(p.name)}</td>
+      <td class="num">${p.mHrs[mi]||'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="num" style="font-size:11px">${counts?`<span style="color:var(--col-hi-text);font-weight:700">COUNTING ★</span>`:'<span style="color:var(--text-dim)">—</span>'}</td>
+    </tr>`;
+  });
+
+  html+=`<tr style="border-top:2px solid var(--border)">
+    <td style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Period Score</td>
+    <td class="num" colspan="2" style="font-weight:800">${period.score}</td>
+  </tr>`;
+
+  html+=`</tbody></table>`;
+  wrap.innerHTML=html;
+  return wrap;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -791,74 +910,46 @@ function renderRegistry(){
 async function loadData(forceRefresh=false){
   const btn=document.getElementById('refresh-btn');
   btn.disabled=true;
-
-  document.getElementById('standings-mount').innerHTML=`
-    <div class="flex flex-col items-center justify-center py-16">
-      <div class="w-8 h-8 border-2 border-surface-container-high border-t-primary-container rounded-full spin mb-4"></div>
-      <p class="text-slate-400 text-sm">Fetching live MLB stats…</p>
-      <p id="load-detail" class="text-slate-600 text-xs mt-1"></p>
-    </div>`;
+  document.getElementById('standings-body').innerHTML=`
+    <tr><td colspan="9">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Fetching live MLB stats…</p>
+        <small id="load-detail"></small>
+      </div>
+    </td></tr>`;
 
   try{
     gResolution=await resolveAllPlayers(forceRefresh);
     gStats=await fetchAllStats(gResolution,forceRefresh);
     gESPN=await resolveESPN(gResolution);
     gStandings=calcStandings(gResolution,gStats);
-
-    document.getElementById('last-updated').textContent=
-      new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-
-    renderStatsStrip();
+    document.getElementById('last-updated').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     renderStandings();
-    renderRegistry();
-    document.getElementById('reg-panel').style.display='';
   }catch(err){
-    document.getElementById('standings-mount').innerHTML=`
-      <div class="mx-4 bg-primary-container/10 border border-primary-container/30 rounded-xl p-6 text-center">
-        <p class="text-primary-container font-bold mb-3">⚠ ${err.message}</p>
-        <button onclick="loadData(true)" class="px-4 py-2 bg-primary-container text-white rounded-lg text-sm font-black uppercase tracking-widest">Try Again</button>
-      </div>`;
+    document.getElementById('standings-body').innerHTML=`
+      <tr><td colspan="9">
+        <div class="error-box">
+          <p>⚠ ${err.message}</p>
+          <button onclick="loadData(true)">Try Again</button>
+        </div>
+      </td></tr>`;
   }finally{
     btn.disabled=false;
   }
 }
 
 // ═══════════════════════════════════════════════════════
-// INIT
+// MONTH NAV
 // ═══════════════════════════════════════════════════════
-function openRegistry(){
-  const panel=document.getElementById('reg-panel');
-  const body=document.getElementById('reg-body');
-  const chevron=document.getElementById('reg-chevron');
-  panel.style.display='';
-  body.classList.add('open');
-  chevron.classList.add('chevron-open');
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-// Month nav
 document.querySelectorAll('.month-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const val=btn.dataset.period;
     gSelectedPeriod=val===''?null:parseInt(val);
-    document.querySelectorAll('.month-btn').forEach(b=>{
-      const active=b===btn;
-      b.className=`month-btn flex-shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors ${active?'bg-primary-container text-white shadow-sm shadow-primary-container/30':'bg-surface-container-high text-slate-400'}`;
-    });
+    document.querySelectorAll('.month-btn').forEach(b=>b.classList.toggle('active',b===btn));
     if(gStandings.length) renderStandings();
   });
 });
-
-// Registry toggle
-document.getElementById('reg-toggle').addEventListener('click',()=>{
-  const body=document.getElementById('reg-body');
-  const chevron=document.getElementById('reg-chevron');
-  body.classList.toggle('open');
-  chevron.classList.toggle('chevron-open');
-});
-
-// Refresh button
-document.getElementById('refresh-btn').addEventListener('click',()=>loadData(true));
 
 loadData();
 </script>
