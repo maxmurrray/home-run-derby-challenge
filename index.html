@@ -10,38 +10,38 @@
 :root, [data-theme="light"] {
   --bg:          #ffffff;
   --bg-2:        #f8f9fa;
-  --bg-3:        #f1f3f5;
-  --border:      #e2e2e2;
-  --text:        #111111;
-  --text-muted:  #777777;
-  --text-dim:    #bbbbbb;
+  --border:      #6D6E71;
+  --table-line:  #6D6E71;
+  --alt-bg:      #F0F1F2;
+  --text:        #000000;
+  --text-muted:  #555555;
+  --text-dim:    #aaaaaa;
   --accent:      #d10000;
   --col-hi:      #eef3fd;
   --col-hi-text: #1a56db;
-  --gold:        #d4a017;
-  --silver:      #8a929c;
-  --bronze:      #a0632a;
-  --row-hover:   #f4f7ff;
-  --detail-bg:   #fafafa;
-  --logo:        url('logo-light.svg');
+  --gold:        #c8900a;
+  --silver:      #7a8390;
+  --bronze:      #8a5520;
+  --row-hover:   #f0f4ff;
+  --detail-bg:   #f7f7f7;
 }
 [data-theme="dark"] {
   --bg:          #0a1422;
   --bg-2:        #131c2a;
-  --bg-3:        #17202e;
-  --border:      rgba(255,255,255,0.08);
+  --border:      rgba(255,255,255,0.15);
+  --table-line:  rgba(255,255,255,0.12);
+  --alt-bg:      #131c2a;
   --text:        #dae3f7;
   --text-muted:  #6878a0;
   --text-dim:    #3a4a66;
   --accent:      #e31837;
-  --col-hi:      rgba(26,86,219,0.12);
+  --col-hi:      rgba(26,86,219,0.14);
   --col-hi-text: #7baaf7;
   --gold:        #ffd65b;
   --silver:      #b0b8c4;
   --bronze:      #cd7f32;
   --row-hover:   rgba(255,255,255,0.04);
   --detail-bg:   #0c1420;
-  --logo:        url('logo-dark.svg');
 }
 
 /* ── RESET ───────────────────────────────────────────── */
@@ -55,132 +55,166 @@ body {
   min-height: 100vh;
   transition: background 0.2s, color 0.2s;
 }
-a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* ── PAGE WRAPPER ─────────────────────────────────────── */
+.page-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
 
 /* ── HEADER ──────────────────────────────────────────── */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 28px 14px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  z-index: 50;
+  padding: 20px 0 18px;
 }
-.header-left { display: flex; align-items: center; gap: 12px; }
-.logo-img { height: 50px; width: auto; display: block; }
+.header-left { display: flex; align-items: center; gap: 10px; }
+.logo-img { height: 52px; width: auto; display: block; }
+
+/* Info button — visible but not loud */
 .info-btn {
   width: 26px; height: 26px;
   border-radius: 50%;
-  border: 1.5px solid var(--border);
+  border: 2px solid #6D6E71;
   background: none;
-  color: var(--text-muted);
+  color: #444444;
   font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
   transition: all 0.15s;
-}
-.info-btn:hover { border-color: var(--text-muted); color: var(--text); }
-.header-right { display: flex; align-items: center; gap: 8px; }
-.live-badge {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 10px; font-weight: 800;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--accent);
-}
-.live-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  animation: livepulse 1.6s ease-in-out infinite;
-}
-@keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-#last-updated { font-size: 11px; color: var(--text-dim); }
-.icon-btn {
-  width: 30px; height: 30px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: none; color: var(--text-muted);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px; transition: all 0.15s;
-}
-.icon-btn:hover { background: var(--bg-2); color: var(--text); }
-.icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-/* ── MONTH NAV ───────────────────────────────────────── */
-.month-nav {
-  display: flex; gap: 6px;
-  padding: 10px 28px;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto; scrollbar-width: none;
-  background: var(--bg);
-}
-.month-nav::-webkit-scrollbar { display: none; }
-.month-btn {
   flex-shrink: 0;
-  padding: 4px 14px;
+}
+.info-btn:hover { border-color: #111; color: #111; }
+
+.header-right {
+  display: flex; align-items: center; gap: 14px;
+}
+
+/* Toggle switch — visual only for now */
+.toggle-wrap {
+  display: flex; align-items: center; gap: 7px;
+}
+.toggle-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.toggle-switch {
+  position: relative; display: inline-block;
+  width: 36px; height: 20px; cursor: pointer;
+}
+.toggle-switch input { display: none; }
+.toggle-track {
+  position: absolute; inset: 0;
+  background: #d0d0d0;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: none; color: var(--text-muted);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.07em; text-transform: uppercase;
-  transition: all 0.15s;
+  transition: background 0.2s;
 }
-.month-btn:hover { background: var(--bg-2); color: var(--text); }
-.month-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-/* ── RULES BAR ───────────────────────────────────────── */
-.rules-bar {
-  padding: 7px 28px;
-  background: var(--bg-2);
-  border-bottom: 1px solid var(--border);
-  display: flex; gap: 24px; flex-wrap: wrap;
+.toggle-switch input:checked + .toggle-track { background: #111111; }
+.toggle-thumb {
+  position: absolute;
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
-.rules-bar span { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+.toggle-switch input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(16px);
+}
 
-/* ── TABLE ───────────────────────────────────────────── */
+/* Refresh button — plain black, red on hover */
+.refresh-btn {
+  background: none; border: none;
+  color: #000000;
+  font-size: 18px; font-weight: 400;
+  line-height: 1;
+  padding: 2px 4px;
+  transition: color 0.15s;
+  display: flex; align-items: center;
+}
+.refresh-btn:hover { color: var(--accent); }
+.refresh-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── TABLE CONTAINER ─────────────────────────────────── */
+.table-section {
+  border-top: 1px solid #6D6E71;
+}
 .table-wrap { overflow-x: auto; }
+
 table.standings {
   width: 100%; border-collapse: collapse;
-  min-width: 600px;
+  min-width: 560px;
 }
+
+/* Header row */
 table.standings thead th {
-  padding: 9px 14px;
+  padding: 9px 12px;
   font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--text-muted);
+  color: #000000;
   background: var(--bg);
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid #6D6E71;
   white-space: nowrap;
-  user-select: none;
+  text-align: left;
 }
-th.num, td.num { text-align: right; }
-th.sorted, td.sorted {
+table.standings thead th.num { text-align: right; }
+table.standings thead th.sorted {
   background: var(--col-hi);
   color: var(--col-hi-text);
 }
-table.standings tbody tr {
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
+
+/* Vertical divider after NAME column */
+table.standings thead th.col-name,
+table.standings tbody td.col-name {
+  border-right: 1px solid #6D6E71;
+}
+
+/* Body rows */
+table.standings tbody tr.data-row {
+  background: var(--bg);
+  border-bottom: none;
   transition: background 0.1s;
+  cursor: pointer;
 }
 table.standings tbody tr.data-row:hover { background: var(--row-hover); }
-table.standings tbody tr.expanded-row > td:first-child { border-left: 3px solid var(--accent); }
+
+/* Alternating rows */
+table.standings tbody tr.data-row.alt {
+  background: #F0F1F2;
+  border-top: 0.5px solid #6D6E71;
+  border-bottom: 0.5px solid #6D6E71;
+}
+table.standings tbody tr.data-row.alt:hover { background: #e8eaf0; }
+
+/* Expanded row marker */
+table.standings tbody tr.data-row.expanded-row {
+  border-bottom: none;
+}
+
+/* Cells */
 table.standings td {
-  padding: 10px 14px; white-space: nowrap;
+  padding: 9px 12px; white-space: nowrap;
 }
 .td-rank {
   width: 42px; text-align: center;
   font-size: 13px; font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
 }
 .td-rank.r1 { color: var(--gold); }
 .td-rank.r2 { color: var(--silver); }
 .td-rank.r3 { color: var(--bronze); }
-.td-name { min-width: 160px; }
+
+.td-name { min-width: 150px; }
 .team-label {
-  font-size: 14px; font-weight: 600; color: var(--text);
+  font-size: 14px; font-weight: 600;
+  color: #000000;
   display: flex; align-items: center; gap: 4px;
 }
 .chevron {
@@ -188,13 +222,19 @@ table.standings td {
   transition: transform 0.2s; display: inline-block;
 }
 .expanded-row .chevron { transform: rotate(180deg); }
+
 td.num {
+  text-align: right;
   font-variant-numeric: tabular-nums;
-  font-size: 14px; color: var(--text);
+  font-size: 14px; color: #000000;
 }
 td.num.zero { color: var(--text-dim); }
 td.num.total-cell { font-weight: 800; font-size: 15px; }
-td.num.sorted { font-weight: 700; }
+td.num.sorted {
+  background: var(--col-hi);
+  color: var(--col-hi-text);
+  font-weight: 700;
+}
 
 /* ── DETAIL ROW ──────────────────────────────────────── */
 tr.detail-row td {
@@ -204,9 +244,11 @@ tr.detail-row td {
 }
 tr.detail-row:hover { background: var(--detail-bg) !important; }
 .detail-inner {
-  padding: 14px 20px 18px 56px;
-  border-top: 1px solid var(--border);
+  padding: 14px 16px 18px 52px;
+  border-top: 1px solid rgba(109,110,113,0.3);
+  border-bottom: 1px solid rgba(109,110,113,0.3);
 }
+
 .detail-tabs {
   display: flex; gap: 4px; margin-bottom: 12px;
   overflow-x: auto; scrollbar-width: none;
@@ -215,14 +257,16 @@ tr.detail-row:hover { background: var(--detail-bg) !important; }
 .dtab {
   flex-shrink: 0;
   padding: 3px 12px; border-radius: 999px;
-  border: 1px solid var(--border);
+  border: 1px solid #6D6E71;
   background: none; color: var(--text-muted);
   font-size: 10px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   transition: all 0.15s;
 }
 .dtab:hover { background: var(--bg-2); color: var(--text); }
-.dtab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.dtab.active {
+  background: #000000; color: #ffffff; border-color: #000000;
+}
 
 table.roster {
   width: 100%; border-collapse: collapse; font-size: 12px;
@@ -231,27 +275,26 @@ table.roster th {
   padding: 5px 10px;
   font-size: 10px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
+  color: #000000;
+  border-bottom: 1px solid rgba(109,110,113,0.4);
   text-align: left;
 }
 table.roster th.num { text-align: right; }
 table.roster td {
   padding: 5px 10px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 0.5px solid rgba(109,110,113,0.2);
   color: var(--text);
 }
 table.roster td.num { text-align: right; font-variant-numeric: tabular-nums; }
 table.roster tr:last-child td { border-bottom: none; }
-table.roster tr.counting td { color: var(--text); }
 table.roster tr.not-counting td { color: var(--text-muted); }
 .star { color: var(--gold); font-size: 9px; margin-left: 2px; }
 .plink {
-  color: inherit; text-decoration: none;
-  border-bottom: 1px dotted var(--border);
+  color: inherit;
+  border-bottom: 1px dotted rgba(109,110,113,0.4);
   transition: border-color 0.15s;
 }
-.plink:hover { border-color: var(--text-muted); }
+.plink:hover { border-color: #444; }
 
 /* ── LOADING / ERROR ─────────────────────────────────── */
 .loading {
@@ -261,7 +304,7 @@ table.roster tr.not-counting td { color: var(--text-muted); }
 }
 .spinner {
   width: 26px; height: 26px;
-  border: 2px solid var(--border);
+  border: 2px solid #e0e0e0;
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -270,149 +313,132 @@ table.roster tr.not-counting td { color: var(--text-muted); }
 .loading p { font-size: 13px; color: var(--text-muted); }
 .loading small { font-size: 11px; color: var(--text-dim); }
 .error-box {
-  margin: 24px 28px;
+  margin: 24px 0;
   padding: 16px 20px;
-  border: 1px solid rgba(211,0,0,0.25);
-  background: rgba(211,0,0,0.05);
-  border-radius: 8px; color: var(--accent);
+  border: 1px solid rgba(209,0,0,0.25);
+  background: rgba(209,0,0,0.05);
+  border-radius: 6px; color: var(--accent);
 }
 .error-box p { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
 .error-box button {
   padding: 6px 16px; background: var(--accent);
-  color: #fff; border: none; border-radius: 6px;
-  font-size: 12px; font-weight: 700;
+  color: #fff; border: none; border-radius: 4px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
 }
 
 /* ── INFO MODAL ──────────────────────────────────────── */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45); z-index: 200;
+  background: rgba(0,0,0,0.4); z-index: 200;
   align-items: center; justify-content: center;
 }
 .modal-overlay.open { display: flex; }
 .modal {
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 1px solid #6D6E71;
+  border-radius: 10px;
   padding: 24px; max-width: 400px; width: 90%;
 }
 .modal h2 {
-  font-size: 15px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  margin-bottom: 14px;
+  font-size: 14px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  margin-bottom: 14px; color: #000;
 }
 .modal p { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
 .modal-close {
   margin-top: 16px; padding: 8px 20px;
-  background: var(--text); color: var(--bg);
-  border: none; border-radius: 6px;
-  font-size: 13px; font-weight: 700;
+  background: #000; color: #fff;
+  border: none; border-radius: 5px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
 }
 
 /* ── MOBILE ──────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .header { padding: 12px 16px; }
+  .page-inner { padding: 0 16px; }
+  .header { padding: 14px 0; }
   .logo-img { height: 38px; }
-  .month-nav, .rules-bar { padding: 8px 16px; }
-  .rules-bar { display: none; }
-  .detail-inner { padding: 12px 14px; }
-  table.standings td, table.standings th { padding: 8px 10px; }
+  table.standings td, table.standings th { padding: 7px 8px; }
+  .detail-inner { padding: 12px 12px; }
+  .toggle-label { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="header-left">
-    <img id="logo-img" src="logo-light.svg" alt="Home Run Challenge" class="logo-img">
-    <button class="info-btn" onclick="document.getElementById('info-modal').classList.add('open')" title="How it works">i</button>
+<div class="page-inner">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img id="logo-img" src="logo-light.svg" alt="Home Run Challenge" class="logo-img">
+      <button class="info-btn" onclick="document.getElementById('info-modal').classList.add('open')" title="How it works">i</button>
+    </div>
+    <div class="header-right">
+      <div class="toggle-wrap">
+        <span class="toggle-label">Dark</span>
+        <label class="toggle-switch" title="Toggle dark mode">
+          <input type="checkbox" id="theme-toggle-cb">
+          <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+          </span>
+        </label>
+      </div>
+      <button class="refresh-btn" id="refresh-btn" title="Refresh stats" onclick="loadData(true)">↻</button>
+    </div>
+  </header>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-wrap">
+      <table class="standings">
+        <thead>
+          <tr>
+            <th class="td-rank">RK</th>
+            <th class="col-name">NAME</th>
+            <th class="num sorted" id="th-total">TOTAL</th>
+            <th class="num" id="th-m1">APR</th>
+            <th class="num" id="th-m2">JUN</th>
+            <th class="num" id="th-m3">JUL</th>
+            <th class="num" id="th-m4">AUG</th>
+            <th class="num" id="th-m5">SEP</th>
+            <th class="num" id="th-m6">OCT</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body">
+          <tr><td colspan="9">
+            <div class="loading">
+              <div class="spinner"></div>
+              <p>Fetching live MLB stats…</p>
+              <small id="load-detail"></small>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="header-right">
-    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-    <span id="last-updated">—</span>
-    <button class="icon-btn" id="theme-btn" title="Toggle theme" onclick="toggleTheme()">☀</button>
-    <button class="icon-btn" id="refresh-btn" title="Refresh" onclick="loadData(true)">↻</button>
-  </div>
-</header>
 
-<!-- MONTH NAV -->
-<nav class="month-nav">
-  <button class="month-btn active" data-period="">ALL</button>
-  <button class="month-btn" data-period="0">M1 Mar/Apr</button>
-  <button class="month-btn" data-period="1">M2 May</button>
-  <button class="month-btn" data-period="2">M3 Jun</button>
-  <button class="month-btn" data-period="3">M4 Jul</button>
-  <button class="month-btn" data-period="4">M5 Aug</button>
-  <button class="month-btn" data-period="5">M6 Sep</button>
-</nav>
-
-<!-- RULES -->
-<div class="rules-bar">
-  <span>6 Periods: M1 Mar/Apr · M2 May · M3 Jun · M4 Jul · M5 Aug · M6 Sep</span>
-  <span>Top 10 players per month count · Resets each month</span>
-</div>
-
-<!-- TABLE -->
-<div class="table-wrap">
-  <table class="standings">
-    <thead>
-      <tr>
-        <th class="td-rank">RK</th>
-        <th>NAME</th>
-        <th class="num sorted" id="th-total">TOTAL</th>
-        <th class="num" id="th-m1">M1</th>
-        <th class="num" id="th-m2">M2</th>
-        <th class="num" id="th-m3">M3</th>
-        <th class="num" id="th-m4">M4</th>
-        <th class="num" id="th-m5">M5</th>
-        <th class="num" id="th-m6">M6</th>
-      </tr>
-    </thead>
-    <tbody id="standings-body">
-      <tr><td colspan="9">
-        <div class="loading">
-          <div class="spinner"></div>
-          <p>Fetching live MLB stats…</p>
-          <small id="load-detail"></small>
-        </div>
-      </td></tr>
-    </tbody>
-  </table>
-</div>
+</div><!-- /page-inner -->
 
 <!-- INFO MODAL -->
 <div class="modal-overlay" id="info-modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
     <h2>How It Works</h2>
-    <p>6 scoring periods run through the MLB season: Mar/Apr, May, Jun, Jul, Aug, and Sep.</p>
+    <p>6 scoring periods run through the MLB season: Mar/Apr, Jun, Jul, Aug, Sep, and Oct.</p>
     <p>Each month, the <strong>top 10 home run hitters</strong> from each team's 13-player roster count toward that team's score. Scoring resets every month.</p>
-    <p>Your season total is the sum of all 6 monthly scores. Click any team to see their full roster breakdown.</p>
+    <p>Your season total is the sum of all 6 monthly scores. Click any team name to see their full roster breakdown.</p>
     <button class="modal-close" onclick="document.getElementById('info-modal').classList.remove('open')">Got it</button>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
-// THEME
+// THEME (toggle switch — wired up for when dark mode is ready)
 // ═══════════════════════════════════════════════════════
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.dataset.theme === 'dark';
-  const next = isDark ? 'light' : 'dark';
-  html.dataset.theme = next;
-  document.getElementById('theme-btn').textContent = next === 'dark' ? '☾' : '☀';
-  document.getElementById('logo-img').src = next === 'dark' ? 'logo-dark.svg' : 'logo-light.svg';
-  localStorage.setItem('hrd_theme', next);
-}
-(function initTheme() {
-  const saved = localStorage.getItem('hrd_theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = saved || (prefersDark ? 'dark' : 'light');
-  document.documentElement.dataset.theme = theme;
-  document.getElementById('theme-btn').textContent = theme === 'dark' ? '☾' : '☀';
-  document.getElementById('logo-img').src = theme === 'dark' ? 'logo-dark.svg' : 'logo-light.svg';
-})();
+const themeCb = document.getElementById('theme-toggle-cb');
+themeCb.addEventListener('change', function() {
+  // Dark mode styling not finalized yet — placeholder
+  // document.documentElement.dataset.theme = this.checked ? 'dark' : 'light';
+});
 
 // ═══════════════════════════════════════════════════════
 // CONFIG
@@ -429,16 +455,16 @@ const TTL_ESPN    = 7  * 24 * 60 * 60 * 1000;
 const API = 'https://statsapi.mlb.com/api/v1';
 
 const MONTHS = [
-  {id:1, label:'Mar/Apr', col:'M1', months:[3,4]},
-  {id:2, label:'May',     col:'M2', months:[5]},
-  {id:3, label:'Jun',     col:'M3', months:[6]},
-  {id:4, label:'Jul',     col:'M4', months:[7]},
-  {id:5, label:'Aug',     col:'M5', months:[8]},
-  {id:6, label:'Sep',     col:'M6', months:[9]},
+  {id:1, label:'Mar/Apr', col:'APR', months:[3,4]},
+  {id:2, label:'Jun',     col:'JUN', months:[6]},
+  {id:3, label:'Jul',     col:'JUL', months:[7]},
+  {id:4, label:'Aug',     col:'AUG', months:[8]},
+  {id:5, label:'Sep',     col:'SEP', months:[9]},
+  {id:6, label:'Oct',     col:'OCT', months:[10]},
 ];
 
 // ═══════════════════════════════════════════════════════
-// ROSTERS — unchanged from original
+// ROSTERS
 // ═══════════════════════════════════════════════════════
 const ROSTERS = {
   "Team Stein":        ["Ohtani","Suarez","Caminero","Devers","Busch","Wood","Olson","Tatis","Witt","Wallner","Acuna","Chourio","Henderson"],
@@ -474,7 +500,7 @@ const ROSTERS = {
 };
 
 // ═══════════════════════════════════════════════════════
-// PLAYER REGISTRY — unchanged
+// PLAYER REGISTRY
 // ═══════════════════════════════════════════════════════
 const PLAYER_REGISTRY = {
   "Ohtani":      {id:660271, full:"Shohei Ohtani",        team:"LAD"},
@@ -556,13 +582,13 @@ const DISAMBIG = {
 };
 
 // ═══════════════════════════════════════════════════════
-// CACHE — unchanged
+// CACHE
 // ═══════════════════════════════════════════════════════
 function cGet(k,ttl){try{const r=localStorage.getItem(k);if(!r)return null;const{ts,d}=JSON.parse(r);return Date.now()-ts>ttl?null:d}catch{return null}}
 function cSet(k,d){try{localStorage.setItem(k,JSON.stringify({ts:Date.now(),d}))}catch{}}
 
 // ═══════════════════════════════════════════════════════
-// MLB API — unchanged
+// MLB API
 // ═══════════════════════════════════════════════════════
 async function jFetch(url){const r=await fetch(url);if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}
 
@@ -636,7 +662,7 @@ async function fetchAllStats(resolution,forceRefresh){
 }
 
 // ═══════════════════════════════════════════════════════
-// ESPN — unchanged
+// ESPN
 // ═══════════════════════════════════════════════════════
 function normName(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
 
@@ -686,13 +712,13 @@ function playerLink(rosterName){
   const res=gResolution[rosterName]||{};
   const espn=gESPN[normName(res.full)]||{};
   const displayName=espn.espnName||res.full||rosterName;
-  const team=res.team&&res.team!=='?'?` <span style="font-size:10px;color:var(--text-muted);font-weight:500">${res.team}</span>`:'';
+  const team=res.team&&res.team!=='?'?` <span style="font-size:10px;color:#888;font-weight:500">${res.team}</span>`:'';
   if(espn.espnUrl) return `<a href="${espn.espnUrl}" target="_blank" rel="noopener" class="plink">${displayName}</a>${team}`;
   return `${displayName}${team}`;
 }
 
 // ═══════════════════════════════════════════════════════
-// SCORING — unchanged
+// SCORING
 // ═══════════════════════════════════════════════════════
 function calcPeriod(players,resolution,stats,monthNums){
   const entries=players.map(name=>{const id=resolution[name]?.id;const hrs=id?monthNums.reduce((s,m)=>s+(stats[id]?.[m]||0),0):0;return{name,hrs};});
@@ -713,61 +739,48 @@ function calcStandings(resolution,stats){
 // ═══════════════════════════════════════════════════════
 // GLOBALS
 // ═══════════════════════════════════════════════════════
-let gResolution={}, gStats={}, gStandings=[], gESPN={}, gSelectedPeriod=null;
-let gOpenTeam=null;
-
+let gResolution={}, gStats={}, gStandings=[], gESPN={}, gOpenTeam=null;
 function setDetail(msg){const e=document.getElementById('load-detail');if(e)e.textContent=msg;}
 
 // ═══════════════════════════════════════════════════════
-// RENDER — STANDINGS TABLE
+// RENDER STANDINGS
 // ═══════════════════════════════════════════════════════
 function renderStandings(){
   const body=document.getElementById('standings-body');
   body.innerHTML='';
 
-  // Sort by selected period or season total
-  const sorted=gSelectedPeriod===null
-    ? [...gStandings]
-    : [...gStandings].sort((a,b)=>b.periods[gSelectedPeriod].score-a.periods[gSelectedPeriod].score||a.team.localeCompare(b.team));
-
-  // Update header highlight
   document.querySelectorAll('table.standings thead th').forEach(th=>th.classList.remove('sorted'));
-  const activeThId=gSelectedPeriod===null?'th-total':`th-m${gSelectedPeriod+1}`;
-  document.getElementById(activeThId)?.classList.add('sorted');
+  document.getElementById('th-total')?.classList.add('sorted');
 
-  sorted.forEach((row,i)=>{
+  gStandings.forEach((row,i)=>{
     const rank=i+1;
-    const score=gSelectedPeriod===null?row.total:row.periods[gSelectedPeriod].score;
-    const rankClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
+    const isAlt=i%2===1;
     const isOpen=gOpenTeam===row.team;
+    const rankClass=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
 
-    // Main row
     const tr=document.createElement('tr');
-    tr.className=`data-row${isOpen?' expanded-row':''}`;
+    tr.className=`data-row${isAlt?' alt':''}${isOpen?' expanded-row':''}`;
     tr.dataset.team=row.team;
 
-    const m=row.periods.map((p,mi)=>{
+    const mCells=row.periods.map(p=>{
       const v=p.score;
-      const isSelected=gSelectedPeriod===mi;
-      const cls=`num${isSelected?' sorted':''}${!v?' zero':''}`;
-      return `<td class="${cls}">${v||'—'}</td>`;
+      return `<td class="num${!v?' zero':''}">${v||'—'}</td>`;
     }).join('');
 
     tr.innerHTML=`
       <td class="td-rank ${rankClass}">${rank}</td>
-      <td class="td-name">
+      <td class="td-name col-name">
         <span class="team-label">
           ${row.team}
           <span class="chevron">▾</span>
         </span>
       </td>
-      <td class="num total-cell${gSelectedPeriod===null?' sorted':''}">${score||'—'}</td>
-      ${m}`;
+      <td class="num total-cell sorted">${row.total||'—'}</td>
+      ${mCells}`;
 
-    tr.addEventListener('click',()=>toggleDetail(row,tr));
+    tr.addEventListener('click',()=>toggleDetail(row));
     body.appendChild(tr);
 
-    // Detail row (if open)
     if(isOpen){
       const dtr=document.createElement('tr');
       dtr.className='detail-row';
@@ -783,12 +796,10 @@ function renderStandings(){
   });
 }
 
-function toggleDetail(row,tr){
-  const wasOpen=gOpenTeam===row.team;
-  gOpenTeam=wasOpen?null:row.team;
+function toggleDetail(row){
+  gOpenTeam=gOpenTeam===row.team?null:row.team;
   renderStandings();
-  if(!wasOpen){
-    // Scroll row into view
+  if(gOpenTeam){
     setTimeout(()=>{
       const el=document.querySelector(`tr[data-team="${CSS.escape(row.team)}"]`);
       el?.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -807,7 +818,6 @@ function buildDetailInner(container,row){
     return{name,mHrs,total:mHrs.reduce((s,v)=>s+v,0)};
   });
 
-  // Tabs
   const tabs=document.createElement('div');
   tabs.className='detail-tabs';
   const content=document.createElement('div');
@@ -841,34 +851,28 @@ function buildSeasonRoster(pdata,periods){
   const top10ByMonth=MONTHS.map((_,mi)=>{
     return new Set([...pdata].sort((a,b)=>b.mHrs[mi]-a.mHrs[mi]).slice(0,TOP_N).map(p=>p.name));
   });
-
   const wrap=document.createElement('div');
-  let html=`<table class="roster">
-    <thead><tr>
-      <th>Player</th>
-      ${MONTHS.map(m=>`<th class="num">${m.col}</th>`).join('')}
-      <th class="num">Total</th>
-    </tr></thead><tbody>`;
-
+  let html=`<table class="roster"><thead><tr>
+    <th>Player</th>
+    ${MONTHS.map(m=>`<th class="num">${m.col}</th>`).join('')}
+    <th class="num">Total</th>
+  </tr></thead><tbody>`;
   sorted.forEach(p=>{
     const counting=p.mHrs.some((h,mi)=>h>0&&top10ByMonth[mi].has(p.name));
     html+=`<tr class="${counting?'counting':'not-counting'}">
       <td>${playerLink(p.name)}</td>
       ${p.mHrs.map((h,mi)=>{
         const counts=h>0&&top10ByMonth[mi].has(p.name);
-        return `<td class="num">${h?`${h}${counts?'<span class="star">★</span>':''}`:'<span style="color:var(--text-dim)">—</span>'}</td>`;
+        return `<td class="num">${h?`${h}${counts?'<span class="star">★</span>':''}`:'<span style="color:#ccc">—</span>'}</td>`;
       }).join('')}
-      <td class="num" style="font-weight:700">${p.total||'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="num" style="font-weight:700">${p.total||'<span style="color:#ccc">—</span>'}</td>
     </tr>`;
   });
-
-  html+=`<tr style="border-top:2px solid var(--border)">
-    <td style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Score</td>
+  html+=`<tr style="border-top:2px solid #6D6E71">
+    <td style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#6D6E71">Score</td>
     ${periods.map(p=>`<td class="num" style="font-weight:700;color:var(--col-hi-text)">${p.score||'—'}</td>`).join('')}
     <td class="num" style="font-weight:800">${periods.reduce((s,p)=>s+p.score,0)}</td>
-  </tr>`;
-
-  html+=`</tbody></table>`;
+  </tr></tbody></table>`;
   wrap.innerHTML=html;
   return wrap;
 }
@@ -876,30 +880,24 @@ function buildSeasonRoster(pdata,periods){
 function buildMonthRoster(pdata,mi,period){
   const sorted=[...pdata].sort((a,b)=>b.mHrs[mi]-a.mHrs[mi]);
   const top10=new Set(sorted.slice(0,TOP_N).map(p=>p.name));
-
   const wrap=document.createElement('div');
-  let html=`<table class="roster">
-    <thead><tr>
-      <th>Player</th>
-      <th class="num">HR</th>
-      <th class="num">Status</th>
-    </tr></thead><tbody>`;
-
+  let html=`<table class="roster"><thead><tr>
+    <th>Player</th>
+    <th class="num">HR</th>
+    <th class="num">Status</th>
+  </tr></thead><tbody>`;
   sorted.forEach(p=>{
     const counts=top10.has(p.name)&&p.mHrs[mi]>0;
     html+=`<tr class="${counts?'counting':'not-counting'}">
       <td>${playerLink(p.name)}</td>
-      <td class="num">${p.mHrs[mi]||'<span style="color:var(--text-dim)">—</span>'}</td>
-      <td class="num" style="font-size:11px">${counts?`<span style="color:var(--col-hi-text);font-weight:700">COUNTING ★</span>`:'<span style="color:var(--text-dim)">—</span>'}</td>
+      <td class="num">${p.mHrs[mi]||'<span style="color:#ccc">—</span>'}</td>
+      <td class="num" style="font-size:11px">${counts?`<span style="color:var(--col-hi-text);font-weight:700">COUNTING ★</span>`:'<span style="color:#ccc">—</span>'}</td>
     </tr>`;
   });
-
-  html+=`<tr style="border-top:2px solid var(--border)">
-    <td style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Period Score</td>
-    <td class="num" colspan="2" style="font-weight:800">${period.score}</td>
-  </tr>`;
-
-  html+=`</tbody></table>`;
+  html+=`<tr style="border-top:2px solid #6D6E71">
+    <td style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#6D6E71">Score</td>
+    <td class="num" colspan="2" style="font-weight:800">${period.score||'—'}</td>
+  </tr></tbody></table>`;
   wrap.innerHTML=html;
   return wrap;
 }
@@ -918,13 +916,11 @@ async function loadData(forceRefresh=false){
         <small id="load-detail"></small>
       </div>
     </td></tr>`;
-
   try{
     gResolution=await resolveAllPlayers(forceRefresh);
     gStats=await fetchAllStats(gResolution,forceRefresh);
     gESPN=await resolveESPN(gResolution);
     gStandings=calcStandings(gResolution,gStats);
-    document.getElementById('last-updated').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     renderStandings();
   }catch(err){
     document.getElementById('standings-body').innerHTML=`
@@ -938,18 +934,6 @@ async function loadData(forceRefresh=false){
     btn.disabled=false;
   }
 }
-
-// ═══════════════════════════════════════════════════════
-// MONTH NAV
-// ═══════════════════════════════════════════════════════
-document.querySelectorAll('.month-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const val=btn.dataset.period;
-    gSelectedPeriod=val===''?null:parseInt(val);
-    document.querySelectorAll('.month-btn').forEach(b=>b.classList.toggle('active',b===btn));
-    if(gStandings.length) renderStandings();
-  });
-});
 
 loadData();
 </script>
