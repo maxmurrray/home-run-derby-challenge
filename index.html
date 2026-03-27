@@ -382,12 +382,49 @@ table.standings thead th.sorted.sortable {
 
 /* ── MOBILE ──────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .page-inner { padding: 0 16px; }
-  .header { padding: 14px 0; }
+  .page-inner { padding: 0; }
+  .header { padding: 14px 16px; }
+  .month-nav { padding: 8px 16px; }
   .logo-img { height: 38px; }
   table.standings td, table.standings th { padding: 7px 8px; }
   .detail-inner { padding: 12px 12px; }
   .toggle-label { display: none; }
+}
+
+/* ── STICKY COLUMNS (RK + NAME) ─────────────────────── */
+table.standings thead th.td-rank,
+table.standings thead th.col-name,
+table.standings tbody td.td-rank,
+table.standings tbody td.col-name {
+  position: sticky;
+  z-index: 5;
+}
+table.standings thead th.td-rank,
+table.standings tbody td.td-rank {
+  left: 0;
+}
+table.standings thead th.col-name,
+table.standings tbody td.col-name {
+  left: 42px;
+}
+
+/* Sticky cell backgrounds must match row bg */
+table.standings thead th.td-rank,
+table.standings thead th.col-name {
+  background: var(--bg);
+  z-index: 10;
+}
+table.standings tbody tr.data-row td.td-rank,
+table.standings tbody tr.data-row td.col-name {
+  background: var(--bg);
+}
+table.standings tbody tr.data-row.alt td.td-rank,
+table.standings tbody tr.data-row.alt td.col-name {
+  background: var(--alt-bg);
+}
+table.standings tbody tr.data-row:hover td.td-rank,
+table.standings tbody tr.data-row:hover td.col-name {
+  background: var(--row-hover);
 }
 </style>
 </head>
