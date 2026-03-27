@@ -462,9 +462,23 @@ table.standings thead th.sorted.sortable {
 // THEME (toggle switch — wired up for when dark mode is ready)
 // ═══════════════════════════════════════════════════════
 const themeCb = document.getElementById('theme-toggle-cb');
+
+function applyTheme(dark) {
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  document.getElementById('logo-img').src = dark ? 'logo-dark.svg' : 'logo-light.svg';
+  localStorage.setItem('hrd_theme', dark ? 'dark' : 'light');
+  themeCb.checked = dark;
+}
+
+// Init from saved preference or system preference
+(function() {
+  const saved = localStorage.getItem('hrd_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved ? saved === 'dark' : prefersDark);
+})();
+
 themeCb.addEventListener('change', function() {
-  // Dark mode styling not finalized yet — placeholder
-  // document.documentElement.dataset.theme = this.checked ? 'dark' : 'light';
+  applyTheme(this.checked);
 });
 
 // ═══════════════════════════════════════════════════════
