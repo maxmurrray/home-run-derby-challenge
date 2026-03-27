@@ -775,7 +775,7 @@ function setSort(col){
 
 function getSorted(){
   const arr=[...gStandings];
-  const dir=gSortDir==='desc'?-1:1;
+  const dir=gSortDir==='desc'?1:-1;
   arr.sort((a,b)=>{
     const va=gSortCol==='total'?a.total:a.periods[gSortCol].score;
     const vb=gSortCol==='total'?b.total:b.periods[gSortCol].score;
